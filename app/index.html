@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DompetKeluarga — Anggaran Rumah Tangga</title>
+<meta name="description" content="DompetKeluarga: catat pemasukan dan pengeluaran rumah tangga, atur anggaran per kategori, dan capai target tabungan. Semua data tersimpan di browser Anda sendiri.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="atas">
+  <p class="logo">DompetKeluarga <small>Anggaran rumah tangga, rapi dan tenang</small></p>
+  <nav class="nav" aria-label="Navigasi utama">
+    <a href="#/dasbor">Dasbor</a>
+    <a href="#/transaksi">Transaksi</a>
+    <a href="#/anggaran">Anggaran</a>
+    <a href="#/laporan">Laporan</a>
+    <a href="#/tips">Tips &amp; Kalkulator</a>
+  </nav>
+  <div class="pemilih-bulan">
+    <button class="btn" id="btn-sebelum" type="button" aria-label="Bulan sebelumnya">‹ Sebelumnya</button>
+    <strong id="label-bulan">November 2026</strong>
+    <button class="btn" id="btn-sesudah" type="button" aria-label="Bulan sesudahnya">Sesudahnya ›</button>
+    <input type="month" id="input-bulan" value="2026-11" aria-label="Pilih bulan">
+  </div>
+</header>
+
+<main>
+  <!-- ============ DASBOR ============ -->
+  <section class="halaman" id="hal-dasbor">
+    <h1>Dasbor Anggaran</h1>
+    <p class="sub" id="subjudul-dasbor">Ringkasan November 2026.</p>
+    <div class="grid-kartu">
+      <div class="kartu"><h3>Total Pemasukan</h3><p class="angka-besar masuk" id="kartu-masuk">Rp0</p></div>
+      <div class="kartu"><h3>Total Pengeluaran</h3><p class="angka-besar keluar" id="kartu-keluar">Rp0</p></div>
+      <div class="kartu"><h3>Sisa Uang</h3><p class="angka-besar" id="kartu-sisa">Rp0</p></div>
+      <div class="kartu"><h3>Tingkat Tabungan</h3><p class="angka-besar" id="kartu-tabungan">0%</p></div>
+    </div>
+    <div class="grid-dua">
+      <div class="kartu">
+        <h2>Pengeluaran per Kategori</h2>
+        <canvas id="grafik-batang" role="img" aria-label="Grafik batang pengeluaran per kategori"></canvas>
+      </div>
+      <div class="kartu">
+        <h2>Komposisi Pengeluaran</h2>
+        <canvas id="grafik-lingkaran" role="img" aria-label="Grafik lingkaran komposisi pengeluaran"></canvas>
+      </div>
+    </div>
+    <p class="catatan" id="catatan-dasbor"></p>
+    <p class="catatan">Mau mencatat belanja hari ini? Buka <a href="#/transaksi">Transaksi</a>. Mau mengatur batas belanja? Buka <a href="#/anggaran">Anggaran</a>.</p>
+  </section>
+
+  <!-- ============ TRANSAKSI ============ -->
+  <section class="halaman" id="hal-transaksi">
+    <h1>Transaksi</h1>
+    <p class="sub">Tambah, ubah, dan hapus pemasukan serta pengeluaran. Semua tersimpan di browser Anda.</p>
+    <div id="wadah-formulir"></div>
+    <div class="filter">
+      <select id="filter-kategori" aria-label="Filter kategori"></select>
+      <select id="filter-jenis" aria-label="Filter jenis">
+        <option value="semua">Semua jenis</option>
+        <option value="masuk">Pemasukan</option>
+        <option value="keluar">Pengeluaran</option>
+      </select>
+      <input type="search" id="filter-cari" placeholder="Cari keterangan, cth. pasar" aria-label="Cari keterangan">
+    </div>
+    <p class="sub" id="ringkasan-filter"></p>
+    <div id="daftar-transaksi"></div>
+  </section>
+
+  <!-- ============ ANGGARAN ============ -->
+  <section class="halaman" id="hal-anggaran">
+    <h1>Anggaran Bulanan</h1>
+    <p class="sub" id="ringkasan-anggaran">Batas belanja per kategori untuk bulan yang dipilih.</p>
+    <div class="grid-anggaran" id="daftar-anggaran"></div>
+    <p class="catatan">Status: <strong>Aman</strong> di bawah 80% anggaran, <strong>Hampir habis</strong> 80–100%, <strong>LEWAT anggaran</strong> di atas 100%. Ubah batas kapan saja — perubahannya langsung tersimpan.</p>
+  </section>
+
+  <!-- ============ LAPORAN ============ -->
+  <section class="halaman" id="hal-laporan">
+    <h1>Laporan Bulanan</h1>
+    <p class="sub">Perbandingan bulan berjalan dengan bulan sebelumnya, dan rincian terpakai versus anggaran.</p>
+    <div class="kartu">
+      <h2>Perbandingan Dua Bulan Terakhir</h2>
+      <div id="laporan-perbandingan"></div>
+    </div>
+    <div class="kartu" style="margin-top:14px">
+      <h2>Terpakai vs Anggaran per Kategori</h2>
+      <div id="laporan-kategori"></div>
+    </div>
+  </section>
+
+  <!-- ============ TIPS & KALKULATOR ============ -->
+  <section class="halaman" id="hal-tips">
+    <h1>Tips Hemat &amp; Kalkulator Tabungan</h1>
+    <p class="sub" id="ringkasan-tips">Tips dihitung dari angka bulan berjalan.</p>
+    <div class="grid-dua">
+      <div class="kartu">
+        <h2>Tips Hemat Bulan Ini</h2>
+        <ul id="daftar-tips"></ul>
+      </div>
+      <div class="kartu calc">
+        <h2>Kalkulator Target Tabungan</h2>
+        <form id="calc-form">
+          <label>Target tabungan (Rp)
+            <input type="number" id="calc-target" min="1000" step="1000" value="12000000" required>
+          </label>
+          <label>Jangka waktu (bulan)
+            <input type="number" id="calc-bulan" min="1" max="120" value="12" required>
+          </label>
+          <button type="submit" class="btn utama">Hitung</button>
+        </form>
+        <p id="calc-hasil" style="margin-top:14px">Isi target dan jangka waktu untuk melihat tabungan bulanannya.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>DompetKeluarga menyimpan semua data di localStorage browser Anda — tidak ada data yang dikirim ke server mana pun. Data contoh Oktober–November 2026 sudah dimuat supaya situs langsung bisa dicoba.</p>
+  <button class="btn" id="btn-contoh" type="button">Kembalikan Data Contoh</button>
+</footer>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
